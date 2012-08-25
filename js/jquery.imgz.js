@@ -1,7 +1,6 @@
 (function( $ ) {
     $.fn.imgz = function(options) {
         var settings = $.extend( {
-            'element': 'div',
             'imgSrc': 'image_list.txt',
             'imgRoot': 'img/',
             'blocksSrc': ['block1.html', 
@@ -26,27 +25,25 @@
             var block =
                 settings.blocksSrc[
                     Math.floor(Math.random()*settings.blocksSrc.length)];
-            var nImages = 0,
-                template;
+            var template;
             $.ajax({
                 async: false,
                 type: "GET",
                 url: block,
                 success: function(data) {
-                    var pattern = /data-imgz-number="(\d+)"/
-                    var match = pattern.exec(data);
-                    nImages = parseInt(match[1]);
                     template = data;
                 }
             });
-            blockImages = [];
+            
+            var newBlock = $(template).appendTo(this);
+            var nImages = $('.' + settings.imgClass, newBlock).length;
+            
+            var blockImages = [];
             if (images.length >= nImages) {
                 for (var j = 0; j < nImages; j++) {
                     var i = Math.floor(Math.random()*images.length);
                     blockImages.push(images.splice(i,1));
                 }
-            
-                var newBlock = $(template).appendTo(this);
             
                 for (var i = 0; i < blockImages.length; i++) {
                     var img = new Image();
@@ -83,6 +80,8 @@
                     })(i, blockImages);
                     img.src = settings.imgRoot + blockImages[i];
                 }
+            } else {
+                newBlock.remove();
             }
             
         }
