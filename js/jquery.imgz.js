@@ -2,12 +2,12 @@
     $.fn.imgz = function(options) {
         var settings = $.extend( {
             'element': 'div',
-            'imgSrc': 'img/image_list.txt',
+            'imgSrc': 'image_list.txt',
             'imgRoot': 'img/',
-            'blocksSrc': ['js/block1.html', 
-                          'js/block2.html', 
-                          'js/block3.html',
-                          'js/block4.html'],
+            'blocksSrc': ['block1.html', 
+                          'block2.html', 
+                          'block3.html',
+                          'block4.html'],
             'imgClass': 'imgz-img'
         }, options);
         
