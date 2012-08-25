@@ -7,10 +7,12 @@
                           'block2.html', 
                           'block3.html',
                           'block4.html'],
-            'imgClass': 'imgz-img'
+            'imgClass': 'imgz-img',
+            'max': undefined
         }, options);
         
         var images;
+        var imagesUsed = 0;
         
         $.ajax({
             async: false,
@@ -18,28 +20,41 @@
             url: settings.imgSrc,
             success: function(data) {
                 images = data.split('\n');
+                if (settings.max === undefined) {
+                    settings.max = images.length;
+                }
             }
         })
         
-        while (images.length > 0) {
-            var block =
-                settings.blocksSrc[
-                    Math.floor(Math.random()*settings.blocksSrc.length)];
-            var template;
+        // cache all the blocks so we don't have to fetch them repeatedly
+        var blockCache = {};
+        var nImgs = [];
+        for (var i = 0; i < settings.blocksSrc.length; i++) {
             $.ajax({
                 async: false,
                 type: "GET",
-                url: block,
+                url: settings.blocksSrc[i],
                 success: function(data) {
-                    template = data;
+                    blockCache[settings.blocksSrc[i]] = data;
+                    nImgs.push($('.' + settings.imgClass, data).length);
                 }
-            });
+            })
+        }
+        var minImgs = Math.min.apply(null, nImgs);
+        
+        while (images.length >= minImgs &&
+               imagesUsed + minImgs <= settings.max) {
+            var block =
+                settings.blocksSrc[
+                    Math.floor(Math.random()*settings.blocksSrc.length)];
+            var template = blockCache[block];
             
             var newBlock = $(template).appendTo(this);
             var nImages = $('.' + settings.imgClass, newBlock).length;
             
             var blockImages = [];
-            if (images.length >= nImages) {
+            if (images.length >= nImages &&
+                imagesUsed + nImages <= settings.max) {
                 for (var j = 0; j < nImages; j++) {
                     var i = Math.floor(Math.random()*images.length);
                     blockImages.push(images.splice(i,1));
@@ -80,6 +95,7 @@
                     })(i, blockImages);
                     img.src = settings.imgRoot + blockImages[i];
                 }
+                imagesUsed += nImages;
             } else {
                 newBlock.remove();
             }

@@ -11,6 +11,8 @@ Usage
     $('.imgz').imgz({
         'imgSrc': 'image_list.txt',  // a list of the image files
         'imgRoot': 'img/',  // path to the image files
+		'max': undefined,   // max number of images to use.
+						    // undefined means no max
         'blocksSrc': ['block1.html', 
                       'block2.html', 
                       'block3.html',
